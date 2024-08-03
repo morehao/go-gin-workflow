@@ -22,7 +22,7 @@ code_gen:
   service_name: workflow
   module:
     tpl_dir: internal/resource/codeTpl/module
-    internal_app_root_dir: internal/workflow
+    internal_app_root_dir: internal/app
     project_root_dir: go-gin-workflow
     description: 审批流程实例
     api_doc_tag: 审批流程实例
@@ -32,14 +32,14 @@ code_gen:
     table_name: proc_inst
   model:
     tpl_dir: internal/resource/codeTpl/model
-    internal_app_root_dir: internal/workflow
+    internal_app_root_dir: internal/app
     project_root_dir: go-gin-workflow
     description: 身份链接历史记录表
     package_name: process
     table_name: identitylink_history
   api:
     tpl_dir: internal/resource/codeTpl/api
-    internal_app_root_dir: internal/workflow
+    internal_app_root_dir: internal/app
     project_root_dir: go-gin-workflow
     description: 审批流程保存（token）
     package_name: process

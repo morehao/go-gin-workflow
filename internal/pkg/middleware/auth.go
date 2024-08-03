@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"go-gin-workflow/internal/app/model/daoUser"
 	"go-gin-workflow/internal/pkg/context"
 	"go-gin-workflow/internal/pkg/errorCode"
-	"go-gin-workflow/internal/workflow/model/daoUser"
 
 	"github.com/morehao/go-tools/glog"
 
