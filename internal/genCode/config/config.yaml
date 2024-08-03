@@ -18,31 +18,32 @@ log:
     - requestId
 
 code_gen:
-  mode: api
+  mode: model
+  service_name: workflow
   module:
     tpl_dir: internal/resource/codeTpl/module
     internal_app_root_dir: internal/workflow
-    project_root_dir: go-workflow-engine
-    description: 审批流程
-    api_doc_tag: 审批流程
-    api_group: procdef
-    api_prefix: /workflow/procdef/
-    package_name: procdef
-    table_name: procdef
+    project_root_dir: go-gin-workflow
+    description: 审批流程实例
+    api_doc_tag: 审批流程实例
+    api_group: process
+    api_prefix: /workflow/process/
+    package_name: process
+    table_name: proc_inst
   model:
     tpl_dir: internal/resource/codeTpl/model
     internal_app_root_dir: internal/workflow
-    project_root_dir: go-workflow-engine
-    description: 审批流程定义历史记录
-    package_name: procdef
-    table_name: procdef_history
+    project_root_dir: go-gin-workflow
+    description: 身份链接历史记录表
+    package_name: process
+    table_name: identitylink_history
   api:
     tpl_dir: internal/resource/codeTpl/api
     internal_app_root_dir: internal/workflow
-    project_root_dir: go-workflow-engine
+    project_root_dir: go-gin-workflow
     description: 审批流程保存（token）
-    package_name: procdef
-    target_filename: procdef.go
+    package_name: process
+    target_filename: process.go
     http_method: POST
     function_name: SaveByToken
     api_doc_tag: 用户管理

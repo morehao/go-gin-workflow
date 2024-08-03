@@ -1,5 +1,5 @@
 # 项目简介
-`go-gin-web`项目展示了如何从零开始搭建一个基于Go和Gin框架的工程化实践，包含项目结构、日志组件、数据库连接、错误码设计、代码生成等内容。
+`go-gin-workflow`项目展示了如何从零开始搭建一个基于Go和Gin框架的工程化实践，包含项目结构、日志组件、数据库连接、错误码设计、代码生成等内容。
 
 
 
@@ -8,7 +8,7 @@
 
 采用标准的Go项目结构，包含cmd、internal、pkg、log等目录。目录结构如下：
 ``` bash
-go-gin-web
+go-gin-workflow
 ├── cmd
 │   ├── app
 │   └── genCode
@@ -66,11 +66,11 @@ swag init -g ./cmd/app/main.go
 ## 项目部署
 构建镜像
 ``` bash
-docker buildx build -t go-gin-web .
+docker buildx build -t go-gin-workflow .
 ```
 运行容器
 ``` bash
-docker run -itd --name go-gin-web -p 8099:8099 go-gin-web
+docker run -itd --name go-gin-workflow -p 8099:8099 go-gin-workflow
 ```
 
 ## 快速生成新项目

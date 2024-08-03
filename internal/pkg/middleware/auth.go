@@ -22,10 +22,10 @@ func Auth() gin.HandlerFunc {
 			ginRender.Abort(c, errorCode.UserAuthErr)
 			return
 		}
-		userId := gutils.VToUint64(token)
-		userEntity, getUserErr := daoUser.NewUserDao().GetById(c, userId)
+		userId := token
+		userEntity, getUserErr := daoUser.NewUserDao().GetById(c, gutils.VToUint64(userId))
 		if getUserErr != nil {
-			glog.Errorf(c, "[Middleware.Auth] get user fail, err: %v, userId:%d", getUserErr, userId)
+			glog.Errorf(c, "[Middleware.Auth] get user fail, err: %v, userId:%s", getUserErr, userId)
 			ginRender.Abort(c, errorCode.UserAuthErr)
 			return
 		}

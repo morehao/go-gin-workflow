@@ -20,8 +20,8 @@ func GetClientIp(c *gin.Context) string {
 	return c.ClientIP()
 }
 
-func GetUserID(c *gin.Context) uint64 {
-	return c.GetUint64(UserID)
+func GetUserID(c *gin.Context) string {
+	return c.GetString(UserID)
 }
 
 func GetUserName(c *gin.Context) string {

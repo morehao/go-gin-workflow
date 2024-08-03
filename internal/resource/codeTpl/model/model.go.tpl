@@ -2,7 +2,7 @@ package dao{{.PackagePascalName}}
 
 import (
 	"fmt"
-	"{{.ProjectRootDir}}/internal/app/model"
+	"{{.ProjectRootDir}}/internal/{{.ServiceName}}/model"
 	"{{.ProjectRootDir}}/internal/pkg/errorCode"
 	"time"
 
