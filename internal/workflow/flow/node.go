@@ -38,7 +38,8 @@ func IsValidProcessConfig(node *objFlow.Node) error {
 		}
 	}
 	// 条件节点是否存在
-	if len(node.ConditionNodes) <= 1 {
+	// TODO:为什么要判断条件节点长度是否为1，示例入参中最外层ConditionNodes长度为0
+	if len(node.ConditionNodes) == 1 {
 		return fmt.Errorf("节点【%s】条件节点下的节点数必须大于1", node.NodeID)
 	}
 	// 根据条件变量选择节点索引

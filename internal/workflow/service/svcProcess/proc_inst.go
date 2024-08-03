@@ -142,10 +142,6 @@ func (svc *procInstSvc) Start(c *gin.Context, req *dtoProcess.ProcInstStartReq) 
 		glog.Errorf(c, "[svcProcess.ProcInstCreate] tx fail, err:%v, req:%s", txErr, gutils.ToJsonString(req))
 		return nil, errorCode.ProcInstCreateErr
 	}
-	if err := daoProcess.NewProcInstDao().Insert(c, instEntity); err != nil {
-		glog.Errorf(c, "[svcProcess.ProcInstCreate] daoProcInst Start fail, err:%v, req:%s", err, gutils.ToJsonString(req))
-		return nil, errorCode.ProcInstCreateErr
-	}
 
 	return &dtoProcess.ProcInstStartResp{
 		ID: instEntity.ID,
