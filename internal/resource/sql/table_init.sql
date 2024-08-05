@@ -51,7 +51,7 @@ CREATE TABLE `proc_inst`
     `duration`        bigint                                                        DEFAULT NULL COMMENT '持续时间',
     `start_user_id`   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发起用户ID',
     `start_user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发起用户名称',
-    `is_finished`     tinyint                                                       DEFAULT '0' COMMENT '是否完成',
+    `is_finished`     tinyint                                                       DEFAULT '0' COMMENT '是否完成，1：已完成，2：未完成',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='流程实例表';
 

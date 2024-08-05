@@ -41,6 +41,12 @@ func (ProcInstEntity) TableName() string {
 type ProcInstCond struct {
 	ID             uint64
 	IDs            []uint64
+	StartUserID    string
+	Company        string
+	Candidate      string
+	GroupList      []string
+	DepartmentList []string
+	IsFinished     int8
 	IsDelete       bool
 	Page           int
 	PageSize       int
@@ -182,6 +188,26 @@ func (dao *ProcInstDao) BuildCondition(db *gorm.DB, cond *ProcInstCond) {
 	if len(cond.IDs) > 0 {
 		query := fmt.Sprintf("%s.id in (?)", TblNameProcInst)
 		db.Where(query, cond.IDs)
+	}
+	if cond.Company != "" {
+		query := fmt.Sprintf("%s.company = ?", TblNameProcInst)
+		db.Where(query, cond.Company)
+	}
+	if cond.StartUserID != "" {
+		query := fmt.Sprintf("%s.start_user_id = ?", TblNameProcInst)
+		db.Where(query, cond.StartUserID)
+	}
+	if cond.Candidate != "" {
+		query := fmt.Sprintf("%s.candidate = ?", TblNameProcInst)
+		db.Where(query, cond.Candidate)
+	}
+	if len(cond.GroupList) > 0 && len(cond.DepartmentList) > 0 {
+		query := fmt.Sprintf("%s.candidate in (?)", TblNameProcInst)
+		db.Where(query, cond.GroupList)
+	}
+	if cond.IsFinished > 0 {
+		query := fmt.Sprintf("%s.is_finished = ?", TblNameProcInst)
+		db.Where(query, cond.IsFinished)
 	}
 	if cond.CreatedAtStart > 0 {
 		query := fmt.Sprintf("%s.created_at >= ?", TblNameProcInst)

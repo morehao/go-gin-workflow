@@ -27,3 +27,15 @@ type ProcInstPageListReq struct {
 type ProcInstDeleteReq struct {
 	ID uint64 `json:"id" form:"id" validate:"required" label:"数据自增id"` // 数据自增id
 }
+type CreatedPageListReq struct {
+	objCommon.PageQuery
+}
+type TodoPageListReq struct {
+	objCommon.PageQuery
+	GroupList      []string `json:"groupList" form:"groupList"`           // 用户组列表
+	DepartmentList []string `json:"departmentList" form:"departmentList"` // 部门列表
+}
+type NotifyPageListReq struct {
+	objCommon.PageQuery
+	GroupList []string `json:"groupList" form:"groupList"` // 用户组列表
+}

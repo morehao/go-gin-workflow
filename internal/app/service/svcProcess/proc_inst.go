@@ -1,6 +1,7 @@
 package svcProcess
 
 import (
+	"fmt"
 	"go-gin-workflow/internal/app/dto/dtoProcess"
 	"go-gin-workflow/internal/app/flow"
 	"go-gin-workflow/internal/app/helper"
@@ -12,6 +13,7 @@ import (
 	"go-gin-workflow/internal/pkg/constants"
 	"go-gin-workflow/internal/pkg/context"
 	"go-gin-workflow/internal/pkg/errorCode"
+	"strings"
 
 	jsoniter "github.com/json-iterator/go"
 
@@ -30,6 +32,9 @@ type ProcInstSvc interface {
 	Update(c *gin.Context, req *dtoProcess.ProcInstUpdateReq) error
 	Detail(c *gin.Context, req *dtoProcess.ProcInstDetailReq) (*dtoProcess.ProcInstDetailResp, error)
 	PageList(c *gin.Context, req *dtoProcess.ProcInstPageListReq) (*dtoProcess.ProcInstPageListResp, error)
+	CreatedPageList(c *gin.Context, req *dtoProcess.CreatedPageListReq) (*dtoProcess.CreatedPageListResp, error)
+	TodoPageList(c *gin.Context, req *dtoProcess.TodoPageListReq) (*dtoProcess.TodoPageListResp, error)
+	NotifyPageList(c *gin.Context, req *dtoProcess.NotifyPageListReq) (*dtoProcess.NotifyPageListResp, error)
 }
 
 type procInstSvc struct {
@@ -67,6 +72,7 @@ func (svc *procInstSvc) Start(c *gin.Context, req *dtoProcess.ProcInstStartReq) 
 		StartUserID:   userID,
 		StartUserName: userName,
 		StartTime:     gutils.TimeFormat(now, gutils.YYYY_MM_DD_HH_MM_SS),
+		IsFinished:    constants.ProcessTaskStatusUnfinished,
 	}
 	execNodeLinkedList, parseErr := flow.ParseProcessConfig(procDefEntity.Resource, req.Var)
 	if parseErr != nil {
@@ -234,10 +240,150 @@ func (svc *procInstSvc) PageList(c *gin.Context, req *dtoProcess.ProcInstPageLis
 				TaskID:        v.TaskID,
 				Title:         v.Title,
 			},
-			OperatorBaseInfo: objCommon.OperatorBaseInfo{},
 		})
 	}
 	return &dtoProcess.ProcInstPageListResp{
+		List:  list,
+		Total: total,
+	}, nil
+}
+func (svc *procInstSvc) CreatedPageList(c *gin.Context, req *dtoProcess.CreatedPageListReq) (*dtoProcess.CreatedPageListResp, error) {
+	companyName, userID := context.GetCompanyName(c), context.GetUserID(c)
+	cond := &daoProcess.ProcInstCond{
+		Company:     companyName,
+		StartUserID: userID,
+		Page:        req.Page,
+		PageSize:    req.PageSize,
+		OrderField:  "start_time desc",
+	}
+	entityList, total, getListErr := daoProcess.NewProcInstDao().GetPageListByCond(c, cond)
+	if getListErr != nil {
+		glog.Errorf(c, "[svcProcess.ProcInstPageList] daoProcInst GetPageListByCond fail, err:%v, req:%s", getListErr, gutils.ToJsonString(req))
+		return nil, errorCode.CreatedPageListErr
+	}
+	list := make([]dtoProcess.ProcInstPageListItem, 0, len(entityList))
+	for _, v := range entityList {
+		list = append(list, dtoProcess.ProcInstPageListItem{
+			ID: v.ID,
+			ProcInstBaseInfo: objProcess.ProcInstBaseInfo{
+				Candidate:     v.Candidate,
+				Company:       v.Company,
+				Department:    v.Department,
+				Duration:      v.Duration,
+				EndTime:       v.EndTime,
+				IsFinished:    v.IsFinished,
+				NodeID:        v.NodeID,
+				ProcDefID:     v.ProcDefID,
+				ProcDefName:   v.ProcDefName,
+				StartTime:     v.StartTime,
+				StartUserID:   v.StartUserID,
+				StartUserName: v.StartUserName,
+				TaskID:        v.TaskID,
+				Title:         v.Title,
+			},
+		})
+	}
+	return &dtoProcess.CreatedPageListResp{
+		List:  list,
+		Total: total,
+	}, nil
+}
+func (svc *procInstSvc) TodoPageList(c *gin.Context, req *dtoProcess.TodoPageListReq) (*dtoProcess.TodoPageListResp, error) {
+	companyName, userID := context.GetCompanyName(c), context.GetUserID(c)
+	db := helper.MysqlClient
+	var orCondList []string
+	if len(req.DepartmentList) > 0 {
+		departmentCond := fmt.Sprintf("%s.department in (%s)", daoProcess.TblNameProcInst, strings.Join(req.DepartmentList, ","))
+		candidateCond := fmt.Sprintf("%s.candidate = %s", daoProcess.TblNameProcInst, "'主管'")
+		orCondList = append(orCondList, fmt.Sprintf("(%s and %s)", departmentCond, candidateCond))
+	}
+	if len(req.GroupList) > 0 {
+		orCondList = append(orCondList, fmt.Sprintf("%s.candidate in (%s)", daoProcess.TblNameProcInst, strings.Join(req.GroupList, ",")))
+	}
+	orCondList = append(orCondList, fmt.Sprintf("%s.candidate = %s", daoProcess.TblNameProcInst, userID))
+	db = db.Where(strings.Join(orCondList, " or "))
+	cond := &daoProcess.ProcInstCond{
+		Company:    companyName,
+		IsFinished: constants.ProcessTaskStatusUnfinished,
+		Page:       req.Page,
+		PageSize:   req.PageSize,
+		OrderField: "start_time desc",
+	}
+	entityList, total, getListErr := daoProcess.NewProcInstDao().WithTx(db).GetPageListByCond(c, cond)
+	if getListErr != nil {
+		glog.Errorf(c, "[svcProcess.TodoPageList] daoProcInst GetPageListByCond fail, err:%v, req:%s", getListErr, gutils.ToJsonString(req))
+		return nil, errorCode.CreatedPageListErr
+	}
+	list := make([]dtoProcess.ProcInstPageListItem, 0, len(entityList))
+	for _, v := range entityList {
+		list = append(list, dtoProcess.ProcInstPageListItem{
+			ID: v.ID,
+			ProcInstBaseInfo: objProcess.ProcInstBaseInfo{
+				Candidate:     v.Candidate,
+				Company:       v.Company,
+				Department:    v.Department,
+				Duration:      v.Duration,
+				EndTime:       v.EndTime,
+				IsFinished:    v.IsFinished,
+				NodeID:        v.NodeID,
+				ProcDefID:     v.ProcDefID,
+				ProcDefName:   v.ProcDefName,
+				StartTime:     v.StartTime,
+				StartUserID:   v.StartUserID,
+				StartUserName: v.StartUserName,
+				TaskID:        v.TaskID,
+				Title:         v.Title,
+			},
+		})
+	}
+	return &dtoProcess.TodoPageListResp{
+		List:  list,
+		Total: total,
+	}, nil
+}
+func (svc *procInstSvc) NotifyPageList(c *gin.Context, req *dtoProcess.NotifyPageListReq) (*dtoProcess.NotifyPageListResp, error) {
+	companyName, userID := context.GetCompanyName(c), context.GetUserID(c)
+	// TODO:group条件处理
+	db := helper.MysqlClient
+	if len(req.GroupList) > 0 {
+		db = db.Joins("join identitylink on proc_inst.id = identitylink.proc_inst_id and (identitylink.user_id = ? or identitylink.group in (?))", userID, req.GroupList)
+	} else {
+		db = db.Joins("join identitylink on proc_inst.id = identitylink.proc_inst_id and identitylink.user_id = ?", userID)
+	}
+	cond := &daoProcess.ProcInstCond{
+		Company:  companyName,
+		Page:     req.Page,
+		PageSize: req.PageSize,
+	}
+	entityList, total, getListErr := daoProcess.NewProcInstDao().WithTx(db).GetPageListByCond(c, cond)
+	if getListErr != nil {
+		glog.Errorf(c, "[svcProcess.ProcInstPageList] daoProcInst GetPageListByCond fail, err:%v, req:%s", getListErr, gutils.ToJsonString(req))
+		return nil, errorCode.NotifyPageListErr
+	}
+	list := make([]dtoProcess.ProcInstPageListItem, 0, len(entityList))
+	for _, v := range entityList {
+		list = append(list, dtoProcess.ProcInstPageListItem{
+			ID: v.ID,
+			ProcInstBaseInfo: objProcess.ProcInstBaseInfo{
+				Candidate:     v.Candidate,
+				Company:       v.Company,
+				Department:    v.Department,
+				Duration:      v.Duration,
+				EndTime:       v.EndTime,
+				IsFinished:    v.IsFinished,
+				NodeID:        v.NodeID,
+				ProcDefID:     v.ProcDefID,
+				ProcDefName:   v.ProcDefName,
+				StartTime:     v.StartTime,
+				StartUserID:   v.StartUserID,
+				StartUserName: v.StartUserName,
+				TaskID:        v.TaskID,
+				Title:         v.Title,
+			},
+		})
+	}
+
+	return &dtoProcess.NotifyPageListResp{
 		List:  list,
 		Total: total,
 	}, nil

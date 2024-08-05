@@ -31,3 +31,15 @@ var ProcInstNotExistErr = gerror.Error{
 	Code: 100105,
 	Msg:  "审批流程实例不存在",
 }
+var CreatedPageListErr = gerror.Error{
+	Code: 50000,
+	Msg:  "我创建的流程实例分页列表失败",
+}
+var TodoPageListErr = gerror.Error{
+	Code: 50000,
+	Msg:  "待我审批的流程实例分页列表失败",
+}
+var NotifyPageListErr = gerror.Error{
+	Code: 50000,
+	Msg:  "抄送我的的流程实例分页列表失败",
+}

@@ -18,7 +18,7 @@ log:
     - requestId
 
 code_gen:
-  mode: model
+  mode: api
   service_name: workflow
   module:
     tpl_dir: internal/resource/codeTpl/module
@@ -41,13 +41,13 @@ code_gen:
     tpl_dir: internal/resource/codeTpl/api
     internal_app_root_dir: internal/app
     project_root_dir: go-gin-workflow
-    description: 审批流程保存（token）
+    description: 抄送我的的流程实例分页列表
     package_name: process
-    target_filename: process.go
-    http_method: POST
-    function_name: SaveByToken
-    api_doc_tag: 用户管理
-    api_group: user
-    api_prefix: /workflow/user/
-    api_suffix: disable
-    routerGroup: userGroup
+    target_filename: proc_inst.go
+    http_method: GET
+    function_name: TodoPageList
+    api_doc_tag: 审批流程实例
+    api_group: process
+    api_prefix: /workflow/process/
+    api_suffix: ccPageList
+    routerGroup: processGroup

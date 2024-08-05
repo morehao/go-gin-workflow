@@ -14,6 +14,9 @@ type ProcInstCtr interface {
 	Update(c *gin.Context)
 	Detail(c *gin.Context)
 	PageList(c *gin.Context)
+	CreatedPageList(c *gin.Context)
+	TodoPageList(c *gin.Context)
+	NotifyPageList(c *gin.Context)
 }
 
 type procInstCtr struct {
@@ -134,6 +137,75 @@ func (ctr *procInstCtr) PageList(c *gin.Context) {
 		return
 	}
 	res, err := ctr.procInstSvc.PageList(c, &req)
+	if err != nil {
+		ginRender.Fail(c, err)
+		return
+	} else {
+		ginRender.Success(c, res)
+	}
+}
+
+// CreatedPageList 我创建的流程实例分页列表
+// @Tags 审批流程实例
+// @Summary 我创建的流程实例分页列表
+// @accept application/json
+// @Produce application/json
+// @Param req query dtoProcess.CreatedPageListReq true "我创建的流程实例分页列表"
+// @Success 200 {object} dto.DefaultRender{data=dtoProcess.CreatedPageListResp} "{"code": 0,"data": "ok","msg": "success"}"
+// @Router /workflow/process/createdPageList [get]
+func (ctr *procInstCtr) CreatedPageList(c *gin.Context) {
+	var req dtoProcess.CreatedPageListReq
+	if err := c.ShouldBindQuery(&req); err != nil {
+		ginRender.Fail(c, err)
+		return
+	}
+	res, err := ctr.procInstSvc.CreatedPageList(c, &req)
+	if err != nil {
+		ginRender.Fail(c, err)
+		return
+	} else {
+		ginRender.Success(c, res)
+	}
+}
+
+// TodoPageList 待我审批的流程实例分页列表
+// @Tags 审批流程实例
+// @Summary 待我审批的流程实例分页列表
+// @accept application/json
+// @Produce application/json
+// @Param req query dtoProcess.TodoPageListReq true "待我审批的流程实例分页列表"
+// @Success 200 {object} dto.DefaultRender{data=dtoProcess.TodoPageListResp} "{"code": 0,"data": "ok","msg": "success"}"
+// @Router /workflow/process/todoPageList [get]
+func (ctr *procInstCtr) TodoPageList(c *gin.Context) {
+	var req dtoProcess.TodoPageListReq
+	if err := c.ShouldBindQuery(&req); err != nil {
+		ginRender.Fail(c, err)
+		return
+	}
+	res, err := ctr.procInstSvc.TodoPageList(c, &req)
+	if err != nil {
+		ginRender.Fail(c, err)
+		return
+	} else {
+		ginRender.Success(c, res)
+	}
+}
+
+// NotifyPageList 抄送我的的流程实例分页列表
+// @Tags 审批流程实例
+// @Summary 抄送我的的流程实例分页列表
+// @accept application/json
+// @Produce application/json
+// @Param req query dtoProcess.NotifyPageListReq true "抄送我的的流程实例分页列表"
+// @Success 200 {object} dto.DefaultRender{data=dtoProcess.NotifyPageListResp} "{"code": 0,"data": "ok","msg": "success"}"
+// @Router /workflow/process/notifyPageList [get]
+func (ctr *procInstCtr) NotifyPageList(c *gin.Context) {
+	var req dtoProcess.NotifyPageListReq
+	if err := c.ShouldBindQuery(&req); err != nil {
+		ginRender.Fail(c, err)
+		return
+	}
+	res, err := ctr.procInstSvc.NotifyPageList(c, &req)
 	if err != nil {
 		ginRender.Fail(c, err)
 		return

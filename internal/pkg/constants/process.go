@@ -6,8 +6,8 @@ const (
 )
 
 const (
-	ProcessTaskStatusFinished   = 1 // 任务完成
-	ProcessTaskStatusUnfinished = 2 // 任务未完成
+	ProcessTaskStatusUnfinished = 1 // 任务未完成
+	ProcessTaskStatusFinished   = 2 // 任务完成
 )
 
 const (
